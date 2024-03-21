@@ -6,15 +6,15 @@ const humidityBox = document.querySelector("#humidity-box");
 const windBox = document.querySelector("#wind-box");
 const description = document.querySelectorAll(".description")[0];
 
+let cityValue = "Pune";
 const geometryAPIKey = "bd25096ba75349238ce3619f3039686c";
 const weatherAPIKey = "8f1d7c4cb6d7ec42e5dcf48fb6562c40";
 
 form.addEventListener("submit", async (evt) => {
     evt.preventDefault();
-    const cityValue =
-        cityBox.value.charAt(0).toUpperCase() + cityBox.value.slice(1);
+    cityValue = cityBox.value.charAt(0).toUpperCase() + cityBox.value.slice(1);
     cityBox.value = "";
-    title.innerText = `Weather in ${cityValue}`;
+
     let requestOptions = {
         method: "GET",
     };
@@ -23,9 +23,21 @@ form.addEventListener("submit", async (evt) => {
         `https://api.geoapify.com/v1/geocode/search?text=${cityValue}&apiKey=${geometryAPIKey}`,
         requestOptions
     )
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("City not found");
+            }
+            return response.json();
+        })
         .then((data) => fetchWeatherDetails(data))
-        .catch((error) => console.log("error", error));
+        .catch((error) => {
+            console.error("Error:", error);
+            title.innerText = "City not found";
+            temperatureBox.innerText = "";
+            humidityBox.innerText = "";
+            windBox.innerText = "";
+            description.innerText = "";
+        });
 });
 
 const fetchWeatherDetails = async (data) => {
@@ -43,6 +55,7 @@ const printData = (weatherData) => {
     const humidity = weatherData.main.humidity;
     const windSpeed = (weatherData.wind.speed * 3.6).toFixed(2);
     const weather = weatherData.weather[0].main;
+    title.innerText = `Weather in ${cityValue}`;
     temperatureBox.innerText = `${temperature}°C`;
     humidityBox.innerText = `${humidity}%`;
     windBox.innerText = `${windSpeed} km/hour`;
@@ -50,8 +63,6 @@ const printData = (weatherData) => {
 };
 
 window.addEventListener("load", async (evt) => {
-    const cityValue = "Pune";
-    title.innerText = `Weather in ${cityValue}`;
     let requestOptions = {
         method: "GET",
     };
