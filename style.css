@@ -10,6 +10,7 @@ body {
     justify-content: center;
     background-image: url(Bg-image.jpg);
     background-size: cover;
+    object-fit: cover;
 }
 
 .main-container {

@@ -5,6 +5,8 @@ const temperatureBox = document.querySelectorAll(".temp")[0];
 const humidityBox = document.querySelector("#humidity-box");
 const windBox = document.querySelector("#wind-box");
 const description = document.querySelectorAll(".description")[0];
+const descriptionImg = document.querySelectorAll(".icon")[0];
+const body = document.querySelectorAll("body")[0];
 
 let cityValue = "Pune";
 const geometryAPIKey = "bd25096ba75349238ce3619f3039686c";
@@ -60,6 +62,7 @@ const printData = (weatherData) => {
     humidityBox.innerText = `${humidity}%`;
     windBox.innerText = `${windSpeed} km/hour`;
     description.innerText = `${weather}`;
+    changeIcon(weather);
 };
 
 window.addEventListener("load", async (evt) => {
@@ -75,3 +78,26 @@ window.addEventListener("load", async (evt) => {
         .then((data) => fetchWeatherDetails(data))
         .catch((error) => console.log("error", error));
 });
+
+const changeIcon = (weather) => {
+    descriptionImg.innerHTML = "";
+    const icon = document.createElement("i");
+    icon.classList.add("fa-solid");
+    if (weather === "Clear") {
+        icon.classList.add("fa-sun");
+        body.style.backgroundImage = "url('Clear_bg_img.jpg')";
+    } else if (weather === "Clouds") {
+        icon.classList.add("fa-cloud-sun");
+        body.style.backgroundImage = "url('Cloudy_bg_img.jpg')";
+    } else if (weather === "Rain") {
+        icon.classList.add("fa-cloud-showers-heavy");
+        body.style.backgroundImage = "url('Rainy_bg_img.jpg')";
+    } else if (weather === "Snow") {
+        icon.classList.add("fa-snowflake");
+        body.style.backgroundImage = "url('Snowy_bg_img.jpg')";
+    } else if (weather === "Haze") {
+        icon.classList.add("fa-sun");
+        body.style.backgroundImage = "url('Haze_bg_image.jpeg')";
+    }
+    descriptionImg.appendChild(icon);
+};
